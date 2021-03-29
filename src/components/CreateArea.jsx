@@ -1,9 +1,13 @@
-import React from "react";
+import React, {useState} from "react";
+import AddIcon from '@material-ui/icons/Add';
+import Fab from '@material-ui/core/Fab';
+import Zoom from '@material-ui/core/Zoom';
 
 function CreateArea(props) {
 
-  const [head, setHead] = React.useState('');
-  const [para, setPara] = React.useState('');
+  const [head, setHead] = useState('');
+  const [para, setPara] = useState('');
+  const [inFocus, setinFocus] = useState(0)
 
   function handleHead(event) {
     setHead(event.target.value);
@@ -14,14 +18,20 @@ function CreateArea(props) {
   }
 
   function handleClick() {
-    var note = {
-      title: head,
-      text: para
-    }
+    if(head !== '') {
+      var note = {
+        title: head,
+        text: para
+      }
 
-    props.clicker(note);
-    setHead('');
-    setPara('');
+      props.clicker(note);
+      setHead('');
+      setPara('');
+    }
+  }
+
+  function handleStart() {
+    setinFocus(1);
   }
 
   function handleSubmit(event) {
@@ -30,10 +40,15 @@ function CreateArea(props) {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <input onChange={handleHead} name="title" placeholder="Title" value={head} />
-        <textarea onChange={handlePara} name="content" placeholder="Take a note..." rows="3" value={para} />
-        <button onClick={handleClick}>Add</button>
+      <form className="create-note" onSubmit={handleSubmit}>
+        <input onClick={handleStart} onChange={handleHead} name="title" placeholder={inFocus === 0? "Take a note...":"Title"} value={head} />
+          {inFocus === 1? <textarea onChange={handlePara} name="content" placeholder="Take a note..." rows={inFocus === 1? 3:1} value={para} /> : null}
+          <Zoom in={inFocus}>
+
+          <Fab onClick={handleClick}>
+            <AddIcon />
+          </Fab>
+        </Zoom>
       </form>
     </div>
   );
